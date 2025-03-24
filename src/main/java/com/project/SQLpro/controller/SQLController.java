@@ -31,6 +31,11 @@ public class SQLController {
         return "index";
     }
     
+    @GetMapping("/test")
+    public String test() {
+        return "index";
+    }
+    
 //    @PostMapping("/register")
 //    @ResponseBody
 //    public ResponseEntity<?> executeQuery(@RequestParam("query") String input) throws IOException {

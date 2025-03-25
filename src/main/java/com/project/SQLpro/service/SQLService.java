@@ -48,6 +48,7 @@ public class SQLService {
                 .messages(List.of(userMessage))
                 .build();
         ChatResponse response = cohere.v2().chat(chatRequest);
+        
         String jsonResponse = response.toString();
         // Parse JSON response
         JsonNode rootNode = objectMapper.readTree(jsonResponse);

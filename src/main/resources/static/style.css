@@ -6,16 +6,15 @@
             
         }
         body {
-            background: #f8f9fa;
-            color: #2c394b;
-
+            background: #0f172a;
+            color: #ffffff;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         /* Dark mode styling when dark class is added to body */
         body.dark {
-            background: #0f172a;
-            color: #ffffff;
+            background: #f8f9fa;
+            color: #2c394b;
         }
         .container-sql{
           /*add*/
@@ -66,17 +65,19 @@
             height: 80px;
             padding: 10px;
             font-size: 1em;
-            background: #ffffff;
-            color: black;
-            border: 1px solid
+            background: 
             #1f2937;
+            border: 1px solid 
+            #1f2937;
+			color: white;
             border-radius: 5px;
             transition: all 0.3s ease;
             resize: none;
         }
         #input.dark{
-            background: #1f2937;
-            color: white;
+            background: 
+            #ffffff;
+			color: black;
         }
 
         .button {
@@ -109,8 +110,6 @@
         #refresh:hover {
             transform: rotate(180deg);                  /*add*/
         }
-
-
 		#refresh.dark{
 		   color: #2c394b;
 		   }
@@ -182,11 +181,10 @@
     background-color: #666;
 }
 #refresh{
-    color: rgb(0, 0, 0);
+    color: white;
 }
 #refresh.dark{
-    color: white;
-
+    color: rgb(0, 0, 0);
 }
 /* General Page Styling */
 .result-body{

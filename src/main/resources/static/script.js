@@ -1,4 +1,3 @@
-
 document.getElementById("refresh").addEventListener("click",()=>{
 			document.getElementById('input').value = "";
 		})
@@ -10,7 +9,7 @@ document.getElementById("refresh").addEventListener("click",()=>{
 			
 			 
         });
-    /*     document.getElementById("export-btn").addEventListener("click", function () {
+        document.getElementById("export-btn").addEventListener("click", function () {
         let table = document.querySelector("table");
         let rows = table.querySelectorAll("tr");
         let csvContent = "";
@@ -31,22 +30,10 @@ document.getElementById("refresh").addEventListener("click",()=>{
         document.body.removeChild(link);
     });
 	document.addEventListener("DOMContentLoaded", function () {
-		document.getElementById('input').addEventListener('input', function(event) {
-		        const val = event.target.value.length; // Get length of input text
-		        const button = document.getElementById('button'); // Ensure button exists
-
-		        if (button) { // Check if button exists before accessing style
-		            if (val < 10) {
-		                button.style.backgroundColor = "red";
-		            } else {
-		                button.style.backgroundColor = ""; 
-		            }
-		        }
-		    });
 	    document.getElementById("exportBtn").addEventListener("click", function () {
-	        exportTableToCSV("query_results.csv"); 
+	        exportTableToCSV("query_results.csv");  // HIGHLIGHTED
 	    });
 	});
-	*/
+
 	
 	

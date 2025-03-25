@@ -4,66 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Query Results</title>
-    <link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Syncfusion Styles -->
+    <link href="https://cdn.syncfusion.com/ej2/24.1.41/material.css" rel="stylesheet">
+
+    <!-- Font Awesome for Icons (Optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
+
 <body class="result-body">
+<h1 style="text-align: center;">SQL Query Results</h1>
 
-    <div id="container-result">
-
-		<nav class="nav">
-		    <div  style="padding: 0 10px; font-size: 1.1em;font-weight: bold;"><span style="margin: 0 10px;"><i class="fa-solid fa-database"></i></span >SQL PRO</div>
-		    <div>
-
-		        <button  class="theme-btn" id="btn"><span style="margin: 0 7px;"><i class="fa-solid fa-moon"></i></span>Theme</button>
-		    </div>
-
-		</nav>
-        <h1 style="color:white; text-align: center; padding: 10px 0;">SQL Query Results</h1>
-		<div style="text-align: right; padding: 10px;margin-left: 75%;">
-		    <button id="export-btn" class="button">Export to CSV</button>  <!-- HIGHLIGHTED -->
-		</div>
-        <table id="resultTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Tech</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="row : ${results}">
-                    <td th:text="${row.id}"></td>
-                    <td th:text="${row.name}"></td>
-					<td th:text="${row.tech}"></td>
-                </tr>
-            </tbody>
-        </table>
-
-     <button class="btn"><a href="/" >Go Back </a></button>
+<!-- Table Container -->
+<div id="SyncTable" style="margin: 20px;"></div>
+<div class="center-container">
+    <div class="email-container">
+        <input type="email" id="email" placeholder="Enter recipient email" required>
+        <h4>download csv in local system and mail</h4>
+        <button id="export-btn" class="button">Download</button>
     </div>
-<script >	document.getElementById("export-btn").addEventListener("click", function () {
-	    let table = document.querySelector("table");
-	    if (!table) {
-	        alert("No table found to export.");
-	        return;
-	    }
-	    let rows = table.querySelectorAll("tr");
-	    let csvContent = "";
-	    rows.forEach(row => {
-	        let cols = row.querySelectorAll("th, td");
-	        let rowData = [];
-	        cols.forEach(col => rowData.push(col.innerText));
-	        csvContent += rowData.join(",") + "\n";
-	    });
-	    let blob = new Blob([csvContent], { type: "text/csv" });
-	    let link = document.createElement("a");
-	    link.href = URL.createObjectURL(blob);
-	    link.download = "SQL_Results.csv";
-	    document.body.appendChild(link);
-	    link.click();
-	    document.body.removeChild(link);
-	});</script>
+</div>
+
+<!-- Syncfusion JS -->
+<script src="https://cdn.syncfusion.com/ej2/24.1.41/dist/ej2.min.js"></script>
+
+<script th:text="data"></script>
+
+<!-- JavaScript to Load Data -->
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Fetch data from backend
+            var data = /*[[${data}]]*/ [];
+
+            if (!Array.isArray(data) || data.length === 0) {
+                console.warn("No records found!");
+                alert("Please Enter Valide Question");
+                return;
+            }
+
+            // Generate column definitions dynamically
+            const columns = Object.keys(data[0]).map(key => ({
+                field: key,
+                headerText: key.toUpperCase(),
+                width: 120
+            }));
+
+            // Initialize Syncfusion Grid
+            new ej.grids.Grid({
+                dataSource: data,
+                allowPaging: true,
+                toolbar: ['Search', 'ExcelExport', 'CsvExport'],
+                allowExcelExport: true,
+                columns: columns
+            }).appendTo("#SyncTable");
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("export-btn").addEventListener("click", async function () {
+        let gridElement = document.getElementById("SyncTable");
+        if (!gridElement || !gridElement.ej2_instances || !gridElement.ej2_instances[0]) {
+            alert("SyncTable not found or not initialized.");
+            return;
+        }
+
+        let gridObj = gridElement.ej2_instances[0]; // Get Syncfusion Grid instance
+        let gridData = gridObj.dataSource;
+
+        if (!Array.isArray(gridData) || gridData.length === 0) {
+            alert("No data available for export.");
+            return;
+        }
+
+        // ✅ Convert Grid Data to CSV Format
+        let csvContent = [];
+        let headers = Object.keys(gridData[0]); // Extract column names
+        csvContent.push(headers.join(",")); // Add headers
+
+        gridData.forEach(row => {
+            let rowData = headers.map(key => `"${(row[key] || "").toString().replace(/"/g, '""')}"`);
+            csvContent.push(rowData.join(","));
+        });
+
+        let csvData = csvContent.join("\r\n"); // Use \r\n for better CSV compatibility
+        let csvBlob = new Blob([csvData], { type: "text/csv" });
+
+        // ✅ Get Email Input from the UI
+        let emailInput = document.getElementById("email").value.trim();
+        if (!emailInput) {
+            alert("Please enter a recipient email.");
+            return;
+        }
+
+        // ✅ Step 1: Download CSV Locally
+        let downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(csvBlob);
+        downloadLink.download = "SQL_Results.csv";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // ✅ Step 2: Send CSV via Email
+        let formData = new FormData();
+        formData.append("file", csvBlob, "SQL_Results.csv");
+        formData.append("email", emailInput);
+
+        try {
+            let response = await fetch("/api/email", { // Provide actual backend endpoint
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("CSV downloaded & email sent successfully!");
+            } else {
+                let errorText = await response.text();
+                alert(`Error sending email: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while sending the email.");
+        }
+    });
+});
+</script>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+        
+
+
